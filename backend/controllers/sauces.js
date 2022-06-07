@@ -66,27 +66,25 @@ function modidySauce(req, res) {
 // Supression de l'image dans le dossier images
 function deleteImage(product) {
     if (product == null) return
-    console.log("DELETE IMAGE:", product)
     const fileToDelete = product.imageUrl.split("/").at(-1)
     return unlink("images/" + fileToDelete)
 }
 
 // Rémplacer l'image un produit si elle est modifier dans un produit
 function makePayload(hasNewImage, req) {
-    console.log("hasNewImage :", hasNewImage)
     if (!hasNewImage) return req.body
     const payload = JSON.parse(req.body.sauce)
     payload.imageUrl = makeImageUrl(req, req.file.filename)
-    console.log("voici le body:", payload)
     return payload
 }
 
-// Envoi de la reponse du client
+// Vérifie si le produit est bien dans la database
 function sendClientResponse(product, res) {
+// Si le produit n'est pas trouver
     if (product == null) {
         return res.status(404).send({ message: "Object not found in database" })
     }
-    console.log("ALL GOOD, UPDATING:", product)
+// Renvoi le produit qui correspond dans la database
     return Promise.resolve(res.status(200).send(product)).then(() => product)
 }
 
@@ -133,13 +131,14 @@ function likeSauce(req, res) {
       .then((product) => updateVote(product, like, userId, res))
 // Envois dans la database
       .then((prod) => prod.save())
-// 
+// Récupere les données du produit à liké ou disliké dans la database
       .then((likesProduct) => sendClientResponse(likesProduct, res))
       .catch((err) => res.status(500).send(err))
 }
 
 // Fonction de mise à jour des votes
 function updateVote(product, like, userId, res) {
+
     if (like === 1 || like === -1) return addVote(product, userId, like)
     return resetVote(product, userId, res)
 }
