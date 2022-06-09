@@ -70,7 +70,7 @@ function deleteImage(product) {
     return unlink("images/" + fileToDelete)
 }
 
-// Rémplacer l'image un produit si elle est modifier dans un produit
+// Rémplacer l'image d'un produit si elle est modifier dans un produit
 function makePayload(hasNewImage, req) {
     if (!hasNewImage) return req.body
     const payload = JSON.parse(req.body.sauce)
