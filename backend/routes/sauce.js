@@ -4,7 +4,7 @@ const {
     createSauce,
     getSauceById,
     deleteSauce,
-    modidySauce,
+    modifySauce,
     likeSauce
 } = require("../controllers/sauces")
 const { authenticateUser } = require("../middleware/auth")
@@ -19,7 +19,7 @@ saucesRouter.get("/", getAllSauces)
 saucesRouter.post("/", upload.single("image"), createSauce)
 saucesRouter.get("/:id", getSauceById)
 saucesRouter.delete("/:id", deleteSauce)
-saucesRouter.put("/:id", upload.single("image"), modidySauce)
+saucesRouter.put("/:id", upload.single("image"), modifySauce)
 saucesRouter.post("/:id/like", likeSauce)
 
 module.exports = { saucesRouter }

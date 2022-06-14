@@ -48,7 +48,7 @@ function deleteSauce(req, res) {
 }
 
 // Modifier produit
-function modidySauce(req, res) {
+function modifySauce(req, res) {
     const {
         params: { id }
     } = req
@@ -183,4 +183,4 @@ function addVote(product, userId, like) {
 }
 
 // Envois des fonctions a exporté dans l'app
-module.exports = { getAllSauces, createSauce, getSauceById, deleteSauce, modidySauce, likeSauce }
+module.exports = { getAllSauces, createSauce, getSauceById, deleteSauce, modifySauce, likeSauce }
