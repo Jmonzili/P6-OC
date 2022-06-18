@@ -32,6 +32,8 @@ lancer : nodemon server
 
 Template du fichier .env
 
+PORT = "*******"
+
 DB_USER = "******"
 DB_PASSWORD = "******"
 DB_HOST = "******"
