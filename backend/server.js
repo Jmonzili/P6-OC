@@ -2,7 +2,7 @@ const { app, express } = require("./app")
 const { saucesRouter } = require("./routes/sauce")
 const { authRouter } = require("./routes/user")
 const bodyParser = require("body-parser")
-const port = 3000
+const port = process.env.PORT
 const path = require("path")
 
 // Connection à database
