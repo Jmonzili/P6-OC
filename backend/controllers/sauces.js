@@ -68,7 +68,7 @@ function sendClientResponse(product, res) {
     if (product == null) {
         return res.status(404).send({ message: "Object not found in database" })
     }
-// Renvoi le produit qui correspond dans la database
+// Renvoi le produit qui correspond depuis la database
     return Promise.resolve(res.status(200).send(product)).then(() => product)
 }
 
@@ -107,7 +107,7 @@ function createSauce(req, res) {
 
 // Fonction des Likes
 function likeSauce(req, res) {
-    const { like, userId } =req.body
+    const { like, userId } = req.body
 // Condition en cas d'erreur si la valeur du vote est invalide
     if (![1, 0, -1].includes(like)) return res.status(403),send({ message: "Invalid like value" })
 
