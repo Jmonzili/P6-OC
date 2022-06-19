@@ -81,8 +81,10 @@ function makeImageUrl(req, fileName) {
 function createSauce(req, res) {
     const { body, file } = req
     const fileName = file.filename
-    const sauceObject = JSON.parse(body.sauce)
+    const sauceObject = req.body
     const { name, manufacturer, description, mainPepper, heat, userId } = sauceObject
+
+    console.log({ sauceObject })
 
 // Récupération des data envoyer par le client pour la création
     const sauce = new Sauce( {
