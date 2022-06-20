@@ -1,4 +1,4 @@
-const { unlink } = require("fs/promises")
+const fs = require("fs")
 const { Sauce } = require("../models/sauce.model")
 
 // Affichage de toutes les sauces dans la data base
@@ -23,43 +23,48 @@ function getSauceById(req, res) {
 
 // Supprimer produit
 function deleteSauce(req, res) {
-    const { id } = req.params
-    Sauce.findByIdAndDelete(id)
-      .then((product) => sendClientResponse(product, res))
-      .then((item) => deleteImage(item))
-      .then((res) => console.log("FILE DELETED:", res))
-      .catch((err) => res.status(500).send({ message: err }))
+    Sauce.findById({ _id: req.params.id })
+      .then((sauce) => {
+            if (!sauce) {
+                return res.status(404).send({ 
+                    error: new Error("Object not found in database")
+                })
+            }
+    // Autorisation De supprimer la sauce
+            if (sauce.userId !== req.auth.userId) {
+                return res.status(401).send({ message: 'Requête non autorisée !' })
+            }
+            const fileToDelete = sauce.imageUrl.split("/").at(-1)
+            fs.unlink("images/" + fileToDelete, () => {
+                Sauce.deleteOne({ _id: req.params.id })
+                  .then(() => res.status(200).json({ message: "Sauce supprimé!" }))
+                  .catch((error) => res.status(400).json({ error }));
+            })
+        })
+        .catch((err) => res.status(500).send({ err }))
 }
 
 // Modifier produit
 function modifySauce(req, res) {
-    const {
-        params: { id }
-    } = req
-
-    const hasNewImage = req.file != null
-    const payload = makePayload(hasNewImage, req)
-
-    Sauce.findByIdAndUpdate(id, payload)
-      .then((dbResponse) => sendClientResponse(dbResponse, res))
-      .then((product) => deleteImage(product))
-      .then((res) => console.log("FILE DELETED:", res))
-      .catch((err) => console.error("PROBLEM UPDATING:", err))
-}
-
-// Supression de l'image dans le dossier images
-function deleteImage(product) {
-    if (product == null) return
-    const fileToDelete = product.imageUrl.split("/").at(-1)
-    return unlink("images/" + fileToDelete)
-}
-
-// Rémplacer l'image d'un produit si elle est modifier dans un produit
-function makePayload(hasNewImage, req) {
-    if (!hasNewImage) return req.body
-    const payload = JSON.parse(req.body.sauce)
-    payload.imageUrl = makeImageUrl(req, req.file.filename)
-    return payload
+    const sauceObject = req.file
+      ? {
+          ...JSON.parse(req.body.sauce),
+          imageUrl: `${req.protocol}://${req.get("host")}/images/${
+            req.file.filename
+          }`,
+        }
+      : { ...req.body };
+// Autorisation de modifier la sauce
+    const sauce = req.body
+    if (sauce.userId != req.auth.userId) {
+        return res.status(401).send({ message: 'Requête non autorisée !' })
+    }
+    Sauce.updateOne(
+      { _id: req.params.id },
+      { ...sauceObject, _id: req.params.id }
+    )
+      .then(() => res.status(200).json({ message: "Sauce modifié!" }))
+      .catch((error) => res.status(400).json({ error }));
 }
 
 // Vérifie si le produit est bien dans la database
