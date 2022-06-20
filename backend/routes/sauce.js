@@ -6,7 +6,7 @@ const {
     deleteSauce,
     modifySauce,
     likeSauce
-} = require("../controllers/sauces")
+} = require("../controllers/sauces1")
 const { authenticateUser } = require("../middleware/auth")
 const { upload } = require("../middleware/multer")
 const saucesRouter = express.Router()
