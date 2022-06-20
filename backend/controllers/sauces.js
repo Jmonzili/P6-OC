@@ -56,7 +56,7 @@ function modifySauce(req, res) {
       : { ...req.body };
 // Autorisation de modifier la sauce
     const sauce = req.body
-    if (sauce.userId != req.auth.userId) {
+    if (sauce.userId !== req.auth.userId) {
         return res.status(401).send({ message: 'Requête non autorisée !' })
     }
     Sauce.updateOne(
